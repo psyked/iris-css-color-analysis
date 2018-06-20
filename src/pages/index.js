@@ -1,34 +1,25 @@
 // JS
 import React from 'react'
-import { Card, Segment, Tab, Popup, Input, Label } from 'semantic-ui-react'
+import { Card, Segment, Tab, Input, Label } from 'semantic-ui-react'
 import extractor from 'css-color-extractor'
 import parse from 'parse-color'
 import DeltaE from 'delta-e'
 import axios from 'axios'
-// import brace from 'brace'
-import AceEditor, { diff as DiffEditor } from 'react-ace'
-// import DiffEditor from '../../../node_modules/react-ace/src/diff'
 import rgb2lab from '../libs/rgb2lab'
 import removeDuplicates from '../libs/removeDuplicatesFromArrayByKey'
 
 import Palette from '../components/report/panel/palette'
+import Similar from '../components/report/panel/similar'
+import Extracted from '../components/report/panel/extracted'
+import Source from '../components/report/panel/source'
 
 // CSS
 import "semantic-ui-css/semantic.css";
 import './styles.css'
-import styles from './styles.module.css'
-
-import 'brace/mode/css'
-import 'brace/theme/monokai'
-
-// Raw data
-// import exampleData from 'raw!../master.source'
 
 const parseData = (exampleData) => {
   // extract color declarations from a full stylesheet
   const extractedColours = extractor.fromCss(exampleData);
-
-  // console.log(extractedColours)
 
   // expand the input colours into their other-format equivalents
   const expanded = extractedColours
@@ -189,137 +180,13 @@ class IndexPage extends React.Component {
         menuItem: 'Colour Palette', render: () => <Palette groupedPalette={this.state.groupedPalette}></Palette>
       },
       {
-        menuItem: 'Similar colours', render: () => <Tab.Pane>
-          <h2>Similar colours</h2>
-          <p>The following colour groups have been tested with the <a href="http://zschuessler.github.io/DeltaE/">Delta-E 2000 algorithm</a> and are determined to be <a href="http://zschuessler.github.io/DeltaE/learn">perceptually indistinct,</a> making them good candidates for reducing to a single colour.</p>
-          <div>
-            {
-              state.deduplicatedgroups.map(({ id, value: group }) => {
-                return (
-                  <Segment key={id} vertical>
-                    <div className={styles.palettecontainer}>
-                      {group.map((colour) => {
-                        return (
-                          <Popup
-                            trigger={<div key={colour.hex} className={`ui ${styles.palette} ${colour.hsl[2] > 50 ? styles.palette_dark : styles.palette_light}`} style={{ backgroundColor: colour.hex }}>
-                              {colour.hex.toUpperCase()}
-                            </div>}
-                            content={`Used ${colour.useCount} time${colour.useCount > 1 ? 's' : ''}`}
-                            position='top center'
-                            inverted
-                          />
-                        )
-                      })}
-                    </div>
-                  </Segment>
-                )
-              })
-            }
-          </div>
-        </Tab.Pane>
+        menuItem: 'Similar colours', render: () => <Similar deduplicatedgroups={this.state.deduplicatedgroups}></Similar>
       },
       {
-        menuItem: 'Extracted Colours', render: () => <Tab.Pane>
-          <h2>Extracted Colours</h2>
-          <p>Using <a href="https://github.com/rsanchez/css-color-extractor">css-color-extractor</a> to extract color declarations from CSS source and <a href="https://github.com/substack/parse-color">parse-color</a> to translate declarations into alternative formats.</p>
-          <Card.Group className={styles.palettecontainer} itemsPerRow={3}>
-            {
-              state.deduplicated.map((colour) => {
-                const withDistanceInfo = state.groupedPalette.find(({ hex }) => hex === colour.hex)
-                return (
-                  <Card key={colour.hex}>
-                    <Card.Content>
-                      <div className={`ui mini right floated ${styles.palette}`} style={{ backgroundColor: colour.hex }}></div>
-                      <Card.Header><a name={colour.hex.replace('#', '')}></a>{colour.hex}</Card.Header>
-                      <Card.Meta>Declared {colour.useCount} time{colour.useCount > 1 ? 's' : ''} in CSS</Card.Meta>
-                    </Card.Content>
-                    <Card.Content extra>
-                      <Card.Description>
-                        <table className="ui celled table">
-                          <thead>
-                            <tr>
-                              <th colSpan="2">Existing color declarations</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {
-                              colour.raw.map(value => {
-                                return (
-                                  <tr key={value}>
-                                    <td>
-                                      <code>{value}</code>
-                                    </td>
-                                    <td>
-                                      {
-                                        state.expanded.filter(({ raw }) => raw === value).map(({ raw, useCount }) => {
-                                          return <span key={raw}>Used {useCount} time{useCount > 1 ? 's' : ''}</span>
-                                        })
-                                      }
-                                    </td>
-                                  </tr>
-                                )
-                              })
-                            }
-                          </tbody>
-                        </table>
-                        <table className="ui celled table">
-                          <thead>
-                            <tr>
-                              <th colSpan="2">Nearest Matching color</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>
-                                <div className={`ui mini left floated ${styles.palette}`} style={{ backgroundColor: withDistanceInfo.distance[0].hex }}></div>
-                              </td>
-                              <td>
-                                <span><a href={withDistanceInfo.distance[0].hex}>{withDistanceInfo.distance[0].hex}</a></span><br />
-                                <span>{(100 - withDistanceInfo.distance[0].distance).toFixed(2)}% similarity</span><br />
-                                <span>Used {state.deduplicated.find((otherColour) => otherColour.hex === withDistanceInfo.distance[0].hex).useCount} time{state.deduplicated.find((otherColour) => otherColour.hex === withDistanceInfo.distance[0].hex).useCount > 1 ? 's' : ''}</span><br />
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                        <table className="ui celled table">
-                          <thead>
-                            <tr>
-                              <th colSpan="2">Parsed color values</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr><td><strong>hex</strong></td><td>{String(colour.hex)}</td></tr>
-                            <tr><td><strong>rgb</strong></td><td>{String(colour.rgb)}</td></tr>
-                            <tr><td><strong>rgba</strong></td><td>{String(colour.rgba)}</td></tr>
-                            <tr><td><strong>hsl</strong></td><td>{String(colour.hsl)}</td></tr>
-                            <tr><td><strong>hsla</strong></td><td>{String(colour.hsla)}</td></tr>
-                            <tr><td><strong>hsv</strong></td><td>{String(colour.hsv)}</td></tr>
-                            <tr><td><strong>hsva</strong></td><td>{String(colour.hsva)}</td></tr>
-                            <tr><td><strong>cmyk</strong></td><td>{String(colour.cmyk)}</td></tr>
-                            <tr><td><strong>cmyka</strong></td><td>{String(colour.cmyka)}</td></tr>
-                            <tr className={!colour.keyword ? 'disabled' : ''}><td><strong>keyword</strong></td><td className={!colour.keyword ? styles.disabled : ''}>{!!colour.keyword ? String(colour.keyword) : 'no match'}</td></tr>
-                          </tbody>
-                        </table>
-                      </Card.Description>
-                    </Card.Content>
-                  </Card>
-                )
-              })
-            }
-          </Card.Group>
-        </Tab.Pane>
+        menuItem: 'Extracted Colours', render: () => <Extracted expanded={this.state.expanded} deduplicated={this.state.deduplicated} groupedPalette={this.state.groupedPalette}></Extracted>
       },
       {
-        menuItem: 'Source data', render: () => <Tab.Pane>
-          <h2 id="source-data">Source data</h2>
-          <DiffEditor
-            mode="css"
-            theme="monokai"
-            width="900px"
-            splits={2}
-            value={[String(state.exampleData), String(state.newData)]}
-          />
-        </Tab.Pane>
+        menuItem: 'Source data', render: () => <Source exampleData={this.state.exampleData} newData={this.state.newData}></Source>
       },
     ]
 
