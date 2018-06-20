@@ -1,21 +1,22 @@
 import React from 'react'
 import Link from 'gatsby-link'
+import { Container, Grid, Header } from 'semantic-ui-react'
 
-const Header = ({ siteTitle }) => (
-  <div
+const SiteHeader = ({ siteTitle }) => (
+  <Container fluid
     style={{
       background: 'rebeccapurple',
       marginBottom: '1.45rem',
     }}
   >
-    <div
+    <Container
       style={{
-        margin: '0 auto',
-        maxWidth: 960,
+        // margin: '0 auto',
+        // maxWidth: 960,
         padding: '1.45rem 1.0875rem',
       }}
     >
-      <h1 style={{ margin: 0 }}>
+      <Header as="h1">
         <Link
           to="/"
           style={{
@@ -25,9 +26,9 @@ const Header = ({ siteTitle }) => (
         >
           {siteTitle}
         </Link>
-      </h1>
-    </div>
-  </div>
+      </Header>
+    </Container>
+  </Container>
 )
 
-export default Header
+export default SiteHeader

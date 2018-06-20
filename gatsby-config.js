@@ -1,7 +1,7 @@
 module.exports = {
   siteMetadata: {
-    title: 'CSS Colours Analysis',
+    title: 'Iris: CSS Colours Analysis',
   },
-  pathPrefix: `/openlibrary-css-analysis`,
+  pathPrefix: `/iris-css-color-analysis`,
   plugins: ['gatsby-plugin-react-helmet'],
 }

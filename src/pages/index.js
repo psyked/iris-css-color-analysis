@@ -1,6 +1,6 @@
 // JS
 import React from 'react'
-import { Card, Segment, Tab, Popup, Input } from 'semantic-ui-react'
+import { Card, Segment, Tab, Popup, Input,Label } from 'semantic-ui-react'
 import extractor from 'css-color-extractor'
 import parse from 'parse-color'
 import DeltaE from 'delta-e'
@@ -162,16 +162,18 @@ class IndexPage extends React.Component {
   handleChange(event) {
 
     this.setState({
-      sourceurl: event.target.value
+      sourceurl: event.target.value,
+      loading: true
     })
 
     axios.get(`https://cors-anywhere.herokuapp.com/${event.target.value}`)
       .then(res => {
-        console.log('loaded')
+        // console.log('loaded')
         // const persons = res.data;
-        console.log(res.data);
+        // console.log(res.data);
         this.setState({
-          ...parseData(res.data)
+          ...parseData(res.data),
+          loading: false
         });
       })
   }
@@ -332,10 +334,11 @@ class IndexPage extends React.Component {
     ]
 
     return <div>
-      <p>Inspired by <a href="https://github.com/internetarchive/openlibrary/issues/968">this issue,</a> this is an attempt to help normalise the CSS colour declarations of the Open Library website.</p>
-      <Input fluid icon='search' placeholder='Search...' value={this.state.sourceurl} onChange={this.handleChange.bind(this)} />
+      <Segment padded>
+        <Label attached='top' size="large">Start with a stylesheet URL</Label>
+        <Input size="large" fluid placeholder='Enter CSS URL...' loading={this.state.loading} value={this.state.sourceurl} onChange={this.handleChange.bind(this)} />
+      </Segment>
       <h1>Summary</h1>
-      <p>The <a href="#source-data">master CSS file</a> from OpenLibrary has been embedded into this page and processed.</p>
       <Card fluid>
         <Card.Content>
           <Card.Header>Extracted data</Card.Header>
