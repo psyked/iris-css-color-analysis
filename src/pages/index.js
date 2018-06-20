@@ -1,6 +1,6 @@
 // JS
 import React from 'react'
-import { Card, Segment, Tab, Popup, Input,Label } from 'semantic-ui-react'
+import { Card, Segment, Tab, Popup, Input, Label } from 'semantic-ui-react'
 import extractor from 'css-color-extractor'
 import parse from 'parse-color'
 import DeltaE from 'delta-e'
@@ -10,6 +10,8 @@ import AceEditor, { diff as DiffEditor } from 'react-ace'
 // import DiffEditor from '../../../node_modules/react-ace/src/diff'
 import rgb2lab from '../libs/rgb2lab'
 import removeDuplicates from '../libs/removeDuplicatesFromArrayByKey'
+
+import Palette from '../components/report/panel/palette'
 
 // CSS
 import "semantic-ui-css/semantic.css";
@@ -184,19 +186,7 @@ class IndexPage extends React.Component {
 
     const panes = [
       {
-        menuItem: 'Colour Palette', render: () => <Tab.Pane>
-          <h2>Colour Palette</h2>
-          <p>A preview of all of the colours, arranged by a number of declarations in the stylesheet.</p>
-          <div className={styles.palettecontainer}>
-            {
-              state.groupedPalette.map((colour) => {
-                return (
-                  <div key={colour.hex} className={`ui ${styles.palette}`} style={{ backgroundColor: colour.hex }}></div>
-                )
-              })
-            }
-          </div>
-        </Tab.Pane>
+        menuItem: 'Colour Palette', render: () => <Palette groupedPalette={this.state.groupedPalette}></Palette>
       },
       {
         menuItem: 'Similar colours', render: () => <Tab.Pane>
