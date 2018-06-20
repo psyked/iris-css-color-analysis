@@ -5,7 +5,11 @@ import styles from './similar.module.css'
 
 export default (props) => <Tab.Pane>
     <h2>Similar colours</h2>
-    <p>The following colour groups have been tested with the <a href="http://zschuessler.github.io/DeltaE/">Delta-E 2000 algorithm</a> and are determined to be <a href="http://zschuessler.github.io/DeltaE/learn">perceptually indistinct,</a> making them good candidates for reducing to a single colour.</p>
+    <p>
+        The following colour groups have been tested with the <a href="http://zschuessler.github.io/DeltaE/">Delta-E
+        2000 algorithm</a> and are determined to be <a href="http://zschuessler.github.io/DeltaE/learn">perceptually
+        indistinct,</a> making them good candidates for reducing to a single colour. Colors are sorted left-to-right
+        by brightness level, and the most numerous existing color definition is highlighted for convenience.</p>
     <div>
         {
             props.deduplicatedgroups.map(({ id, value: group }) => {
