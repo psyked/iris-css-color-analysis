@@ -145,13 +145,6 @@ class IndexPage extends React.Component {
     this.handleChange.call(this, { target: { value: this.state.sourceurl } })
   }
 
-  // componentDidUpdate({exampleData}) {
-  //   // Typical usage (don't forget to compare props):
-  //   if (this.props.userID !== {exampleData}) {
-  //     this.fetchData(this.props.userID);
-  //   }
-  // }
-
   handleChange(event) {
 
     this.setState({
@@ -161,19 +154,21 @@ class IndexPage extends React.Component {
 
     axios.get(`https://cors-anywhere.herokuapp.com/${event.target.value}`)
       .then(res => {
-        // console.log('loaded')
-        // const persons = res.data;
-        // console.log(res.data);
         this.setState({
           ...parseData(res.data),
+          errorMessage: undefined,
+          loading: false
+        });
+      }).catch(err => {
+        this.setState({
+          ...parseData(''),
+          errorMessage: err.message,
           loading: false
         });
       })
   }
 
   render() {
-
-    const state = this.state;
 
     const panes = [
       {
@@ -193,7 +188,17 @@ class IndexPage extends React.Component {
     return <div>
       <Segment padded>
         <Label attached='top' size="large">Start with a stylesheet URL</Label>
-        <Input size="large" fluid placeholder='Enter CSS URL...' loading={this.state.loading} value={this.state.sourceurl} onChange={this.handleChange.bind(this)} />
+        <Input
+          fluid
+          size="large"
+          placeholder='Enter CSS URL...'
+          error={!!this.state.errorMessage}
+          loading={this.state.loading}
+          value={this.state.sourceurl}
+          onChange={this.handleChange.bind(this)} />
+        {!!this.state.errorMessage && <Label basic color='red' pointing>
+          {this.state.errorMessage}
+        </Label>}
       </Segment>
       <h1>Summary</h1>
       <Card fluid>
