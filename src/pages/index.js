@@ -1,6 +1,7 @@
 // JS
 import React from 'react'
 import { Card, Segment, Tab, Input, Label } from 'semantic-ui-react'
+import { navigateTo } from "gatsby-link"
 import extractor from 'css-color-extractor'
 import parse from 'parse-color'
 import DeltaE from 'delta-e'
@@ -147,18 +148,26 @@ class IndexPage extends React.Component {
 
   handleChange(event) {
 
+    // window.location.search = `?source=${event.target.value}`
+
+    const newPath = event.target.value;
+
     this.setState({
-      sourceurl: event.target.value,
+      sourceurl: newPath,
       loading: true
     })
 
-    axios.get(`https://cors-anywhere.herokuapp.com/${event.target.value}`)
+    axios.get(`https://cors-anywhere.herokuapp.com/${newPath}`)
       .then(res => {
         this.setState({
           ...parseData(res.data),
           errorMessage: undefined,
           loading: false
         });
+
+        if (newPath !== this.props.location.search) {
+          navigateTo(`?source=${newPath}`)
+        }
       }).catch(err => {
         this.setState({
           ...parseData(''),
