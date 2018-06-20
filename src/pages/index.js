@@ -5,6 +5,7 @@ import extractor from 'css-color-extractor'
 import parse from 'parse-color'
 import DeltaE from 'delta-e'
 import axios from 'axios'
+import queryString from 'query-string'
 import rgb2lab from '../libs/rgb2lab'
 import removeDuplicates from '../libs/removeDuplicatesFromArrayByKey'
 
@@ -126,23 +127,22 @@ const parseData = (exampleData) => {
 
 class IndexPage extends React.Component {
 
-  state = {
-    ...parseData(''),
-    sourceurl: `https://psyked.github.io/assets/built/screen.css`
+  constructor(props) {
+    super(props)
+
+    const { location: { search = '' } = {} } = this.props || {}
+    const { source } = queryString.parse(search)
+
+    this.state = {
+      ...parseData(''),
+      sourceurl: source// || `https://psyked.github.io/assets/built/screen.css`
+    }
   }
 
   componentDidMount() {
-    // console.log('mounted')
-    // axios.get(this.state.sourceurl)
-    //   .then(res => {
-    //     // console.log('loaded')
-    //     // const persons = res.data;
-    //     // console.log(res.data);
-    //     this.setState({
-    //       ...parseData(res.data)
-    //     });
-    //   })
-    this.handleChange.call(this, { target: { value: this.state.sourceurl } })
+    if (this.state.sourceurl) {
+      this.handleChange.call(this, { target: { value: this.state.sourceurl } })
+    }
   }
 
   handleChange(event) {
