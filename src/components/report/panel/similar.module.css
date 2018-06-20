@@ -1,10 +1,11 @@
 .palette {
-    min-width: 50px;
-    height: 50px;
+    min-width: 100px;
+    height: 100px;
     display: block;
     padding: 0 1em;
-    line-height: 50px;
+    line-height: 100px;
     position: relative;
+    text-align: center;
 }
 
 .palette_light {
