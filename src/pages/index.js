@@ -6,7 +6,7 @@ import extractor from 'css-color-extractor'
 import parse from 'parse-color'
 import DeltaE from 'delta-e'
 import axios from 'axios'
-import queryString from 'query-string'
+import queryString from 'query-string-es5'
 import rgb2lab from '../libs/rgb2lab'
 import removeDuplicates from '../libs/removeDuplicatesFromArrayByKey'
 
