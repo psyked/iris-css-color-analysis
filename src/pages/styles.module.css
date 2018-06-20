@@ -1,0 +1,22 @@
+.palette {
+    min-width: 50px;
+    height: 50px;
+    display: block;
+    padding: 0 1em;
+    line-height: 50px;
+    position: relative;
+}
+
+.palette_light {
+    color: white;
+}
+
+.palettecontainer {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.disabled {
+    color: lightgrey;
+    font-style: italic;
+}
