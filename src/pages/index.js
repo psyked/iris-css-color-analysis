@@ -1,6 +1,6 @@
 // JS
 import React from 'react'
-import { Card, Segment, Tab, Input, Label } from 'semantic-ui-react'
+import { Segment, Tab, Input, Label } from 'semantic-ui-react'
 import { navigateTo } from "gatsby-link"
 import extractor from 'css-color-extractor'
 import parse from 'parse-color'
@@ -10,6 +10,7 @@ import queryString from 'query-string-es5'
 import rgb2lab from '../libs/rgb2lab'
 import removeDuplicates from '../libs/removeDuplicatesFromArrayByKey'
 
+import Summary from '../components/report/panel/summary'
 import Palette from '../components/report/panel/palette'
 import Similar from '../components/report/panel/similar'
 import Extracted from '../components/report/panel/extracted'
@@ -58,17 +59,7 @@ const parseData = (exampleData) => {
     newData = newData.replace(colours.raw, `rgba(${colours.rgba})`)
   })
 
-  // const expandedWithUseCount
-
   const deduplicated = removeDuplicates(expandedRefs, 'hex');
-  // const deduplicated = expanded.filter((obj, pos, arr) => {
-  //   const rtn = arr.map(mapObj => mapObj.hex).indexOf(obj.hex) === pos;
-  //   if (rtn) {
-  //     obj.raw = obj.raw.concat(arr[pos].raw)
-  //     console.log(obj.raw)
-  //   }
-  //   return rtn;
-  // });
 
   const groupedPalette = deduplicated.map((color) => {
     return {
@@ -148,8 +139,6 @@ class IndexPage extends React.Component {
 
   handleChange(event) {
 
-    // window.location.search = `?source=${event.target.value}`
-
     const newPath = event.target.value;
 
     this.setState({
@@ -181,6 +170,9 @@ class IndexPage extends React.Component {
 
     const panes = [
       {
+        menuItem: 'Summary', render: () => <Summary deduplicated={this.state.deduplicated} extractedColours={this.state.extractedColours}></Summary>
+      },
+      {
         menuItem: 'Colour Palette', render: () => <Palette groupedPalette={this.state.groupedPalette}></Palette>
       },
       {
@@ -209,34 +201,8 @@ class IndexPage extends React.Component {
           {this.state.errorMessage}
         </Label>}
       </Segment>
-      <h1>Summary</h1>
-      <Card fluid>
-        <Card.Content>
-          <Card.Header>Extracted data</Card.Header>
-        </Card.Content>
-        <Card.Content extra>
-          <Card.Description>
-            <table>
-              <tbody>
-                <tr>
-                  <td>Total Color Declarations:</td>
-                  <td>{this.state.extractedColours.length}</td>
-                </tr>
-                <tr>
-                  <td>Unique Colors:</td>
-                  <td>{this.state.deduplicated.length}</td>
-                </tr>
-                <tr>
-                  <td>CSS Spec Keyword Colors:</td>
-                  <td>{this.state.deduplicated.filter(({ keyword }) => !!keyword).length}</td>
-                </tr>
-              </tbody>
-            </table>
-          </Card.Description>
-        </Card.Content>
-      </Card>
       <Tab panes={panes} />
-    </div >
+    </div>
   }
 }
 
