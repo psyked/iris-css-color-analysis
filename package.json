@@ -1,8 +1,8 @@
 {
-  "name": "gatsby-starter-default",
-  "description": "Gatsby default starter",
+  "name": "iris-css-color-analysis",
+  "description": "Iris: CSS Color Analysis",
   "version": "1.0.0",
-  "author": "Kyle Mathews <mathews.kyle@gmail.com>",
+  "author": "James Ford <psyked84@gmail.com>",
   "dependencies": {
     "axios": "^0.18.0",
     "css-color-extractor": "^0.0.5",
@@ -10,7 +10,6 @@
     "gatsby": "^1.9.271",
     "gatsby-link": "^1.6.40",
     "gatsby-plugin-react-helmet": "^2.0.10",
-    "gh-pages": "^1.2.0",
     "parse-color": "^1.0.0",
     "react-ace": "^6.1.1",
     "react-helmet": "^5.2.0",
@@ -18,21 +17,22 @@
     "semantic-ui-react": "^0.81.1"
   },
   "keywords": [
-    "gatsby"
+    "gatsby",
+    "css",
+    "iris"
   ],
   "license": "MIT",
   "scripts": {
     "build": "gatsby build",
     "develop": "gatsby develop",
     "format": "prettier --write 'src/**/*.js'",
+    "start": "gatsby develop",
     "test": "echo \"Error: no test specified\" && exit 1",
     "deploy": "gatsby build --prefix-paths && gh-pages -d public"
   },
   "devDependencies": {
+    "gh-pages": "^1.2.0",
     "prettier": "^1.12.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gatsbyjs/gatsby-starter-default"
-  }
+  "private": true
 }
