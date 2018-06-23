@@ -54,49 +54,68 @@ const findColoursWithDistance = ({ min, max }, { groupedPalette, deduplicated })
 const renderPalette = (palette, { grayscale }) => {
     return palette.map(({ id, value }) => {
         const group = value
-            .filter(({ hsl }) => grayscale || !!hsl[1])
+            .filter(({ hsl }) => grayscale || !!hsl[1]);
+
+        const maxUse = group.length > 1 ? group.sort(({ useCount: a }, { useCount: b }) => b - a)[0].useCount : 0
+
+        const topColor = group.length > 1 ? group.sort(({ useCount: a }, { useCount: b }) => b - a)[0] : 0
+
         // .filter(({ length }) => length > 1)
         return group.length > 1 && <Segment key={id} vertical>
-            <div className={styles.palettecontainer}>
-                {group && group
-                    // .filter(({ hsl }) => grayscale || !!hsl[1])
-                    .map(color => {
+            <Segment>
+                <div className={styles.palettecontainer} style={{ display: 'inline-flex' }}>
+                    {group && group
+                        // .filter(({ hsl }) => grayscale || !!hsl[1])
+                        .map(color => {
 
-                        const sortedGroup = [...group].sort((a, b) => {
-                            return b.useCount - a.useCount
+                            const sortedGroup = [...group].sort((a, b) => {
+                                return b.useCount - a.useCount
+                            })
+                            const isKeeper = sortedGroup[0].useCount >= 1 && sortedGroup[0].hex === color.hex;
+
+                            return {
+                                ...color,
+                                isKeeper
+                            }
+
                         })
-                        const isKeeper = sortedGroup[0].useCount >= 1 && sortedGroup[0].hex === color.hex;
-
-                        return {
-                            ...color,
-                            isKeeper
-                        }
-
-                    })
-                    .map((color) => {
-                        return (
-                            <Popup
-                                key={color.hex}
-                                trigger={
-                                    <div style={{ position: 'relative' }}>
-                                        {/* {color.useCount <= 1 &&
-                                    <Label color='red' corner='right'><Icon name='delete' /></Label>
-                                } */}
-                                        {color.isKeeper &&
-                                            <Label color='green' corner='right'><Icon name='check' /></Label>
-                                        }
-                                        <div key={color.hex} className={`ui ${styles.palette} ${color.hsl[2] > 50 ? styles.palette_dark : styles.palette_light}`} style={{ backgroundColor: color.hex }}>
-                                            {color.hex.toUpperCase()}
+                        .map((color) => {
+                            return (
+                                <Popup
+                                    key={color.hex}
+                                    trigger={
+                                        <div style={{ position: 'relative' }}>
+                                            {color.isKeeper &&
+                                                <Label color='green' corner='right'><Icon name='check' /></Label>
+                                            }
+                                            <div key={color.hex} className={`ui ${styles.palette} ${color.hsl[2] > 50 ? styles.palette_dark : styles.palette_light}`} style={{ backgroundColor: color.hex }}>
+                                                {color.hex.toUpperCase()}
+                                            </div>
                                         </div>
-                                    </div>
-                                }
-                                content={`Used ${color.useCount} time${color.useCount > 1 ? 's' : ''}`}
-                                position='top center'
-                                inverted
-                            />
-                        )
-                    })}
-            </div>
+                                    }
+                                    content={`Used ${color.useCount} time${color.useCount > 1 ? 's' : ''}`}
+                                    position='top center'
+                                    inverted
+                                />
+                            )
+                        })
+                    }
+                </div>
+                {
+                    group
+                        .filter(({ useCount }) => useCount < maxUse)
+                        .map(color => {
+                            console.log(topColor)
+                            return (
+                                <Label key={color.raw} color='teal'>
+                                    Recommendation:
+                            <Label.Detail>Replace {color.raw} with {topColor.raw}</Label.Detail>
+                                    <Icon name='delete' />
+                                </Label>
+                            )
+                        })
+                }
+            </Segment>
         </Segment>
     })
 }
@@ -114,7 +133,7 @@ class SimilarPane extends React.Component {
     render() {
         const { indistinct, similar, perceptable } = this.props
         return (<Tab.Pane>
-            <p><Radio toggle label='Include grayscale colors' onChange={this.toggleGrayscale.bind(this)} /></p>
+            <Radio toggle label='Include grayscale colors' onChange={this.toggleGrayscale.bind(this)} />
             <h1>Perceptually similar colors</h1>
             <p>
                 The following color groups have been tested with the <a href="http://zschuessler.github.io/DeltaE/">Delta-E
