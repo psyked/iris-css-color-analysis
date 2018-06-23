@@ -1,15 +1,22 @@
 import React from 'react'
 import { Card, Tab } from 'semantic-ui-react'
+import { connect } from "react-redux"
 
 import styles from './extracted.module.css'
 
-export default (props) => <Tab.Pane>
+export default connect(({ deduplicated, expanded, groupedPalette }) => {
+    return {
+        deduplicated,
+        expanded,
+        groupedPalette
+    }
+})(({ deduplicated, expanded, groupedPalette }) => <Tab.Pane>
     <h2>Extracted Colours</h2>
     <p>Using <a href="https://github.com/rsanchez/css-color-extractor">css-color-extractor</a> to extract color declarations from CSS source and <a href="https://github.com/substack/parse-color">parse-color</a> to translate declarations into alternative formats.</p>
     <Card.Group className={styles.palettecontainer} itemsPerRow={3}>
         {
-            props.deduplicated.map((colour) => {
-                const withDistanceInfo = props.groupedPalette.find(({ hex }) => hex === colour.hex)
+            deduplicated.map((colour) => {
+                const withDistanceInfo = groupedPalette.find(({ hex }) => hex === colour.hex)
                 return (
                     <Card key={colour.hex}>
                         <Card.Content>
@@ -35,7 +42,7 @@ export default (props) => <Tab.Pane>
                                                         </td>
                                                         <td>
                                                             {
-                                                                props.expanded.filter(({ raw }) => raw === value).map(({ raw, useCount }) => {
+                                                                expanded.filter(({ raw }) => raw === value).map(({ raw, useCount }) => {
                                                                     return <span key={raw}>Used {useCount} time{useCount > 1 ? 's' : ''}</span>
                                                                 })
                                                             }
@@ -60,7 +67,7 @@ export default (props) => <Tab.Pane>
                                             <td>
                                                 <span><a href={withDistanceInfo.distance[0].hex}>{withDistanceInfo.distance[0].hex}</a></span><br />
                                                 <span>{(100 - withDistanceInfo.distance[0].distance).toFixed(2)}% similarity</span><br />
-                                                <span>Used {props.deduplicated.find((otherColour) => otherColour.hex === withDistanceInfo.distance[0].hex).useCount} time{props.deduplicated.find((otherColour) => otherColour.hex === withDistanceInfo.distance[0].hex).useCount > 1 ? 's' : ''}</span><br />
+                                                <span>Used {deduplicated.find((otherColour) => otherColour.hex === withDistanceInfo.distance[0].hex).useCount} time{deduplicated.find((otherColour) => otherColour.hex === withDistanceInfo.distance[0].hex).useCount > 1 ? 's' : ''}</span><br />
                                             </td>
                                         </tr>
                                     </tbody>
@@ -92,3 +99,4 @@ export default (props) => <Tab.Pane>
         }
     </Card.Group>
 </Tab.Pane>
+)

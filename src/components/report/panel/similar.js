@@ -1,9 +1,14 @@
 import React from 'react'
 import { Segment, Tab, Popup, Label, Icon } from 'semantic-ui-react'
+import { connect } from "react-redux"
 
 import styles from './similar.module.css'
 
-export default (props) => <Tab.Pane>
+export default connect(({ deduplicatedgroups }) => {
+    return {
+        deduplicatedgroups
+    }
+})(({ deduplicatedgroups }) => <Tab.Pane>
     <h2>Similar colours</h2>
     <p>
         The following colour groups have been tested with the <a href="http://zschuessler.github.io/DeltaE/">Delta-E
@@ -12,7 +17,7 @@ export default (props) => <Tab.Pane>
         by brightness level, and the most numerous existing color definition is highlighted for convenience.</p>
     <div>
         {
-            props.deduplicatedgroups.map(({ id, value: group }) => {
+            deduplicatedgroups.map(({ id, value: group }) => {
                 return (
                     <Segment key={id} vertical>
                         <div className={styles.palettecontainer}>
@@ -31,6 +36,7 @@ export default (props) => <Tab.Pane>
                             }).map((colour) => {
                                 return (
                                     <Popup
+                                        key={colour.hex}
                                         trigger={
                                             <div style={{ position: 'relative' }}>
                                                 {/* {colour.useCount <= 1 &&
@@ -56,4 +62,4 @@ export default (props) => <Tab.Pane>
             })
         }
     </div>
-</Tab.Pane>
+</Tab.Pane>)

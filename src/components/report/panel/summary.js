@@ -1,7 +1,14 @@
 import React from 'react'
 import { Card, Segment, Tab, Input, Label } from 'semantic-ui-react'
+import { connect } from "react-redux"
 
-export default (props) => <Tab.Pane><h1>Summary</h1>
+export default connect(({ extractedColours, deduplicated }) => {
+    return {
+        extractedColours,
+        deduplicated
+    }
+})(({ extractedColours = [], deduplicated = [] }) => <Tab.Pane>
+    <h1>Summary</h1>
     <Card fluid>
         <Card.Content>
             <Card.Header>Extracted data</Card.Header>
@@ -12,19 +19,19 @@ export default (props) => <Tab.Pane><h1>Summary</h1>
                     <tbody>
                         <tr>
                             <td>Total Color Declarations:</td>
-                            <td>{props.extractedColours.length}</td>
+                            <td>{extractedColours.length}</td>
                         </tr>
                         <tr>
                             <td>Unique Colors:</td>
-                            <td>{props.deduplicated.length}</td>
+                            <td>{deduplicated.length}</td>
                         </tr>
                         <tr>
                             <td>CSS Spec Keyword Colors:</td>
-                            <td>{props.deduplicated.filter(({ keyword }) => !!keyword).length}</td>
+                            <td>{deduplicated.filter(({ keyword }) => !!keyword).length}</td>
                         </tr>
                     </tbody>
                 </table>
             </Card.Description>
         </Card.Content>
     </Card>
-</Tab.Pane>
+</Tab.Pane>)
