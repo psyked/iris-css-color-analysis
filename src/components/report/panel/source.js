@@ -3,6 +3,7 @@ import { Tab } from 'semantic-ui-react'
 import AceEditor, { diff as DiffEditor } from 'react-ace'
 import { connect } from "react-redux"
 import Measure from 'react-measure'
+import cssbeautify from 'cssbeautify'
 
 import 'brace/mode/css'
 import 'brace/theme/monokai'
@@ -18,6 +19,13 @@ class SourcePane extends React.Component {
     render() {
         const { width, height } = this.state.dimensions
         const { exampleData } = this.props;
+
+        var formattedCSS = cssbeautify(exampleData, {
+            indent: '  ',
+            openbrace: 'separate-line',
+            autosemicolon: true
+        });
+
         return <Tab.Pane>
             <h2 id="source-data">Source data</h2>
             {/* <DiffEditor
@@ -38,7 +46,7 @@ class SourcePane extends React.Component {
                         <AceEditor
                             mode="css"
                             theme="monokai"
-                            value={exampleData}
+                            value={formattedCSS}
                             width={`${width}px`}
                             wrapEnabled={true}
                         />

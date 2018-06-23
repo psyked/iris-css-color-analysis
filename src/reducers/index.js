@@ -67,46 +67,6 @@ const parseData = (exampleData) => {
         }
     })
 
-    // const groups = groupedPalette.map(({ hex, distance }) => {
-    //     return [
-    //         ...distance.filter(({ distance }) => {
-    //             return distance < 1
-    //         }).map(({ hex: dhex }) => {
-    //             return deduplicated.find(({ hex }) => dhex === hex)
-    //         })
-    //     ]
-    //         .concat(deduplicated.find(({ hex: fhex }) => fhex === hex))
-    //         .sort(({ hex: a }, { hex: b }) => {
-    //             return parseInt(a.replace('#', ''), 16) - parseInt(b.replace('#', ''), 16);
-    //         })
-    // }).filter(ar => ar.length > 1)
-
-    // let remappedGroups = groups.map((group) => {
-    //     return {
-    //         id: group.map(({ hex }) => hex).join('-'),
-    //         value: group
-    //     }
-    // })
-
-    // remappedGroups = removeDuplicates(remappedGroups, 'id')
-
-    // const allKeys = remappedGroups.map(({ id }) => id)
-
-    // remappedGroups = remappedGroups.filter((group) => {
-    //     const keysWithSubset = allKeys.filter((key) => key.indexOf(group.id) !== -1)
-    //     return keysWithSubset.length === 1
-    // })
-
-    // const deduplicatedgroups = remappedGroups
-    //     .sort(({ value: a }, { value: b }) => {
-    //         const ahue = a[0]['hsv'][0]
-    //         const bhue = b[0]['hsv'][0]
-    //         if (ahue !== bhue) {
-    //             return bhue - ahue;
-    //         }
-    //         return b.length - a.length
-    //     })
-
     return {
         exampleData,
         newData,
@@ -114,18 +74,11 @@ const parseData = (exampleData) => {
         extractedColours,
         deduplicated,
         groupedPalette,
-        // groups,
-        // deduplicatedgroups
     }
 }
 
 const reducer = (state, action) => {
     if (action.type === `PARSE`) {
-        //   return Object.assign({}, state, {
-        //     count: state.count + 1,
-        //   })
-        // console.log(action.payload)
-        console.log(parseData(action.payload))
         return {
             ...state,
             ...parseData(action.payload)
