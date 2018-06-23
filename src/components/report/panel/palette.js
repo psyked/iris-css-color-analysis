@@ -15,7 +15,7 @@ class PalettePane extends React.Component {
         })
     }
     render() {
-        const { deduplicated, expanded, groupedPalette } = this.props
+        const { deduplicated, extractedColours, groupedPalette } = this.props
         return (<Tab.Pane>
             <h2>Colour Palette</h2>
             <p>A preview of all of the colours, arranged by a number of declarations in the stylesheet.</p>
@@ -64,7 +64,7 @@ class PalettePane extends React.Component {
                                                                 </td>
                                                                 <td>
                                                                     {
-                                                                        expanded.filter(({ raw }) => raw === value).map(({ raw, useCount }) => {
+                                                                        extractedColours.filter(({ raw }) => raw === value).map(({ raw, useCount }) => {
                                                                             return <span key={raw}>Used {useCount} time{useCount > 1 ? 's' : ''}</span>
                                                                         })
                                                                     }
@@ -124,10 +124,10 @@ class PalettePane extends React.Component {
     }
 }
 
-export default connect(({ deduplicated, expanded, groupedPalette }) => {
+export default connect(({ deduplicated, extractedColours, groupedPalette }) => {
     return {
         deduplicated,
-        expanded,
+        extractedColours,
         groupedPalette
     }
 })(PalettePane)

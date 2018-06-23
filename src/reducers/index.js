@@ -2,12 +2,10 @@
 import extractor from 'css-color-extractor'
 import parse from 'parse-color'
 import DeltaE from 'delta-e'
-// import axios from 'axios'
-// import queryString from 'query-string-es5'
 import rgb2lab from '../libs/rgb2lab'
 import removeDuplicates from '../libs/removeDuplicatesFromArrayByKey'
 
-const initialState = { count: 0 }
+const initialState = {}
 
 const parseData = (exampleData) => {
     // console.log(exampleData)
@@ -43,12 +41,6 @@ const parseData = (exampleData) => {
         return b.useCount - a.useCount
     })
 
-    let newData = exampleData;
-
-    expandedRefs.map(colours => {
-        newData = newData.replace(colours.raw, `rgba(${colours.rgba})`)
-    })
-
     const deduplicated = removeDuplicates(expandedRefs, 'hex');
 
     const groupedPalette = deduplicated.map((color) => {
@@ -69,9 +61,7 @@ const parseData = (exampleData) => {
 
     return {
         exampleData,
-        newData,
-        expanded,
-        extractedColours,
+        extractedColours: expanded,
         deduplicated,
         groupedPalette,
     }
