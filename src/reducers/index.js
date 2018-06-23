@@ -67,72 +67,45 @@ const parseData = (exampleData) => {
         }
     })
 
-    const groups = groupedPalette.map(({ hex, distance }) => {
-        return [
-            ...distance.filter(({ distance }) => {
-                return distance < 1
-            }).map(({ hex: dhex }) => {
-                return deduplicated.find(({ hex }) => dhex === hex)
-            })
-        ]
-            .concat(deduplicated.find(({ hex: fhex }) => fhex === hex))
-            .sort(({ hex: a }, { hex: b }) => {
-                return parseInt(a.replace('#', ''), 16) - parseInt(b.replace('#', ''), 16);
-            })
-    }).filter(ar => ar.length > 1)
+    // const groups = groupedPalette.map(({ hex, distance }) => {
+    //     return [
+    //         ...distance.filter(({ distance }) => {
+    //             return distance < 1
+    //         }).map(({ hex: dhex }) => {
+    //             return deduplicated.find(({ hex }) => dhex === hex)
+    //         })
+    //     ]
+    //         .concat(deduplicated.find(({ hex: fhex }) => fhex === hex))
+    //         .sort(({ hex: a }, { hex: b }) => {
+    //             return parseInt(a.replace('#', ''), 16) - parseInt(b.replace('#', ''), 16);
+    //         })
+    // }).filter(ar => ar.length > 1)
 
-    let remappedGroups = groups.map((group) => {
-        return {
-            id: group.map(({ hex }) => hex).join('-'),
-            value: group
-        }
-    })
-
-    remappedGroups = removeDuplicates(remappedGroups, 'id')
-
-    const allKeys = remappedGroups.map(({ id }) => id)
-    // console.log(allKeys);
-
-    remappedGroups = remappedGroups.filter((group) => {
-        const keysWithSubset = allKeys.filter((key) => key.indexOf(group.id) !== -1)
-        // console.log(group.id, keysWithSubset);
-        return keysWithSubset.length === 1
-    })
-    // .filter((val, pos, arr) => {
-    //   const justIds = arr.map(({ id }) => id).filter((val, index) => index !== pos)
-    //   console.log(String(justIds), val.id, String(justIds).indexOf(val.id))
-    //   return String(justIds).indexOf(val.id) === -1
+    // let remappedGroups = groups.map((group) => {
+    //     return {
+    //         id: group.map(({ hex }) => hex).join('-'),
+    //         value: group
+    //     }
     // })
+
+    // remappedGroups = removeDuplicates(remappedGroups, 'id')
+
+    // const allKeys = remappedGroups.map(({ id }) => id)
+
     // remappedGroups = remappedGroups.filter((group) => {
-    //   const allIds = remappedGroups.map(({ id }) => id);
-    //   return allIds.some(({ hex: val }) => { return group.id.indexOf(val) >= 0; })
-    //   // return allIds.filter((curr) => {
-    //   //   // console.log(curr, group.id, curr.indexOf(group.id), prev + curr.indexOf(group.id) !== -1)
-    //   //   return curr.indexOf(group.id) !== -1;// || prev;//index
-    //   // }).length
+    //     const keysWithSubset = allKeys.filter((key) => key.indexOf(group.id) !== -1)
+    //     return keysWithSubset.length === 1
     // })
-    // remappedGroups.every(function(val) { return PlayerTwo.indexOf(val) >= 0; })
 
-    const deduplicatedgroups = remappedGroups
-        .sort(({ value: a }, { value: b }) => {
-            const ahue = a[0]['hsv'][0]
-            const bhue = b[0]['hsv'][0]
-            if (ahue !== bhue) {
-                return bhue - ahue;
-            }
-            return b.length - a.length
-        })
-
-    // console.log({
-    //     exampleData,
-    //     newData,
-    //     expanded,
-    //     extractedColours,
-    //     deduplicated,
-    //     groupedPalette,
-    //     groups,
-    //     deduplicatedgroups
-    // })
+    // const deduplicatedgroups = remappedGroups
+    //     .sort(({ value: a }, { value: b }) => {
+    //         const ahue = a[0]['hsv'][0]
+    //         const bhue = b[0]['hsv'][0]
+    //         if (ahue !== bhue) {
+    //             return bhue - ahue;
+    //         }
+    //         return b.length - a.length
+    //     })
 
     return {
         exampleData,
@@ -141,8 +114,8 @@ const parseData = (exampleData) => {
         extractedColours,
         deduplicated,
         groupedPalette,
-        groups,
-        deduplicatedgroups
+        // groups,
+        // deduplicatedgroups
     }
 }
 
