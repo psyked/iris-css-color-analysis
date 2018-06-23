@@ -1,2 +1,2 @@
-webpackJsonp([60335399758886],{479:function(t,a){t.exports={data:{site:{siteMetadata:{title:"Iris: CSS Colours Analysis"}}},layoutContext:{}}}});
+webpackJsonp([60335399758886],{480:function(t,a){t.exports={data:{site:{siteMetadata:{title:"Iris: CSS Colours Analysis"}}},layoutContext:{}}}});
 //# sourceMappingURL=path----2501a13d42ac71dd32e6.js.map
