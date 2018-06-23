@@ -29,6 +29,10 @@ export default connect(({ extractedColours, deduplicated }) => {
                             <td>CSS Spec Keyword Colors:</td>
                             <td>{deduplicated.filter(({ keyword }) => !!keyword).length}</td>
                         </tr>
+                        <tr>
+                            <td>Shades of Grey:</td>
+                            <td>{deduplicated.filter(({ hsl }) => !hsl[1]).length}</td>
+                        </tr>
                     </tbody>
                 </table>
             </Card.Description>
