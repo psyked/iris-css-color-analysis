@@ -11,3 +11,8 @@
     display: flex;
     flex-wrap: wrap;
 }
+
+.disabled {
+    color: lightgrey;
+    font-style: italic;
+}
