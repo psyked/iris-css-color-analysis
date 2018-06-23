@@ -1,24 +1,26 @@
 import React from 'react'
-import { Segment, Tab, Popup, Label, Icon } from 'semantic-ui-react'
+import { Segment, Tab, Popup, Label, Icon, Radio } from 'semantic-ui-react'
 import { connect } from "react-redux"
 import removeDuplicates from '../../../libs/removeDuplicatesFromArrayByKey'
 
 import styles from './similar.module.css'
 
 const findColoursWithDistance = ({ min, max }, { groupedPalette, deduplicated }) => {
-    const groups = groupedPalette.map(({ hex, distance }) => {
-        return [
-            ...distance.filter(({ distance }) => {
-                return distance < max && distance > min
-            }).map(({ hex: dhex }) => {
-                return deduplicated.find(({ hex }) => dhex === hex)
-            })
-        ]
-            .concat(deduplicated.find(({ hex: fhex }) => fhex === hex))
-            .sort(({ hex: a }, { hex: b }) => {
-                return parseInt(a.replace('#', ''), 16) - parseInt(b.replace('#', ''), 16);
-            })
-    }).filter(ar => ar.length > 1)
+    const groups = groupedPalette
+        .map(({ hex, distance }) => {
+            return [
+                ...distance.filter(({ distance }) => {
+                    return distance < max && distance > min
+                }).map(({ hex: dhex }) => {
+                    return deduplicated.find(({ hex }) => dhex === hex)
+                })
+            ]
+                .concat(deduplicated.find(({ hex: fhex }) => fhex === hex))
+                .sort(({ hex: a }, { hex: b }) => {
+                    return parseInt(a.replace('#', ''), 16) - parseInt(b.replace('#', ''), 16);
+                })
+        })
+        .filter(ar => ar.length > 1)
 
     let remappedGroups = groups.map((group) => {
         return {
@@ -49,12 +51,16 @@ const findColoursWithDistance = ({ min, max }, { groupedPalette, deduplicated })
     return deduplicatedgroups
 }
 
-const renderPalette = (palette) => {
-    return palette.map(({ id, value: group }) => {
-        return (
-            <Segment key={id} vertical>
-                <div className={styles.palettecontainer}>
-                    {group.map(color => {
+const renderPalette = (palette, { grayscale }) => {
+    return palette.map(({ id, value }) => {
+        const group = value
+            .filter(({ hsl }) => grayscale || !!hsl[1])
+        // .filter(({ length }) => length > 1)
+        return group.length > 1 && <Segment key={id} vertical>
+            <div className={styles.palettecontainer}>
+                {group && group
+                    // .filter(({ hsl }) => grayscale || !!hsl[1])
+                    .map(color => {
 
                         const sortedGroup = [...group].sort((a, b) => {
                             return b.useCount - a.useCount
@@ -66,7 +72,8 @@ const renderPalette = (palette) => {
                             isKeeper
                         }
 
-                    }).map((color) => {
+                    })
+                    .map((color) => {
                         return (
                             <Popup
                                 key={color.hex}
@@ -89,40 +96,57 @@ const renderPalette = (palette) => {
                             />
                         )
                     })}
-                </div>
-            </Segment>
-        )
+            </div>
+        </Segment>
     })
+}
+
+class SimilarPane extends React.Component {
+    state = {
+        grayscale: false
+    }
+    toggleGrayscale() {
+        this.setState({
+            ...this.state,
+            grayscale: !this.state.grayscale
+        })
+    }
+    render() {
+        const { indistinct, similar, perceptable } = this.props
+        return (<Tab.Pane>
+            <p><Radio toggle label='Include grayscale colors' onChange={this.toggleGrayscale.bind(this)} /></p>
+            <h1>Perceptually similar colors</h1>
+            <p>
+                The following color groups have been tested with the <a href="http://zschuessler.github.io/DeltaE/">Delta-E
+            2000 algorithm</a> and are determined to be <a href="http://zschuessler.github.io/DeltaE/learn">perceptually
+            indistinct,</a> making them good candidates for reducing to a single color. Colors are sorted left-to-right
+            by brightness level, and the most numerous existing color definition is highlighted for convenience.</p>
+            <h2>Not perceptible by human eyes</h2>
+            <div>
+                {
+                    renderPalette(indistinct, { ...this.state })
+                }
+            </div>
+            <h2>Perceptible through close observation</h2>
+            <div>
+                {
+                    renderPalette(similar, { ...this.state })
+                }
+            </div>
+            {/* <h2>Perceptible at a glance</h2>
+            <div>
+                {
+                    renderPalette(perceptable, { ...this.state })
+                }
+            </div> */}
+        </Tab.Pane>)
+    }
 }
 
 export default connect(({ groupedPalette, deduplicated }) => {
     return {
-        perceptuallyIndistinct: findColoursWithDistance({ min: 0, max: 1 }, { groupedPalette, deduplicated }),
-        similar: findColoursWithDistance({ min: 1, max: 2 }, { groupedPalette, deduplicated })
+        indistinct: findColoursWithDistance({ min: 0, max: 1 }, { groupedPalette, deduplicated }),
+        similar: findColoursWithDistance({ min: 1, max: 2 }, { groupedPalette, deduplicated }),
+        // perceptable: findColoursWithDistance({ min: 2, max: 5 }, { groupedPalette, deduplicated })
     }
-})(({ perceptuallyIndistinct, similar }) => {
-    return (<Tab.Pane>
-        <h2>Perceptually indistinct colors</h2>
-        <p>
-            The following color groups have been tested with the <a href="http://zschuessler.github.io/DeltaE/">Delta-E
-        2000 algorithm</a> and are determined to be <a href="http://zschuessler.github.io/DeltaE/learn">perceptually
-        indistinct,</a> (Not perceptible by human eyes) making them good candidates for reducing to a single color. Colors are sorted left-to-right
-        by brightness level, and the most numerous existing color definition is highlighted for convenience.</p>
-        <div>
-            {
-                renderPalette(perceptuallyIndistinct)
-            }
-        </div>
-        <h2>Similar colors</h2>
-        <p>
-            The following color groups have been tested with the <a href="http://zschuessler.github.io/DeltaE/">Delta-E
-        2000 algorithm</a> and are determined to be <a href="http://zschuessler.github.io/DeltaE/learn">perceptually
-        indistinct,</a> (Perceptible through close observation) making them good candidates for reducing to a single color. Colors are sorted left-to-right
-        by brightness level, and the most numerous existing color definition is highlighted for convenience.</p>
-        <div>
-            {
-                renderPalette(similar)
-            }
-        </div>
-    </Tab.Pane>)
-})
+})(SimilarPane)

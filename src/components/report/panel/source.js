@@ -14,6 +14,7 @@ class SourcePane extends React.Component {
             height: -1
         }
     }
+
     render() {
         const { width, height } = this.state.dimensions
         const { exampleData } = this.props;
