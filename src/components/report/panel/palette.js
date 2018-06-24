@@ -17,9 +17,9 @@ class PalettePane extends React.Component {
     render() {
         const { deduplicated, extractedColours, groupedPalette } = this.props
         return (<Tab.Pane>
+            <Radio toggle label='Include grayscale colors' onChange={this.toggleGrayscale.bind(this)} />
             <h2>Colour Palette</h2>
             <p>A preview of all of the colours, arranged by a number of declarations in the stylesheet.</p>
-            <p><Radio toggle label='Include grayscale colors' onChange={this.toggleGrayscale.bind(this)} /></p>
             <div className={styles.palettecontainer}>
                 {
                     groupedPalette && groupedPalette
@@ -45,8 +45,7 @@ class PalettePane extends React.Component {
                                     <div className={`ui mini right floated ${styles.palette}`} style={{ backgroundColor: colour.hex }}></div>
                                     <Card.Header><a name={colour.hex.replace('#', '')}></a>{colour.hex}</Card.Header>
                                     <Card.Meta>Declared {colour.useCount} time{colour.useCount > 1 ? 's' : ''} in CSS</Card.Meta>
-                                </Card.Content>
-                                <Card.Content extra>
+                                    <br />
                                     <Card.Description>
                                         <table className="ui celled table">
                                             <thead>
@@ -75,25 +74,35 @@ class PalettePane extends React.Component {
                                                 }
                                             </tbody>
                                         </table>
-                                        <table className="ui celled table">
-                                            <thead>
-                                                <tr>
-                                                    <th colSpan="2">Nearest Matching color</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <div className={`ui mini left floated ${styles.palette}`} style={{ backgroundColor: withDistanceInfo.distance[0].hex }}></div>
-                                                    </td>
-                                                    <td>
-                                                        <span><a href={withDistanceInfo.distance[0].hex}>{withDistanceInfo.distance[0].hex}</a></span><br />
-                                                        <span>{(100 - withDistanceInfo.distance[0].distance).toFixed(2)}% similarity</span><br />
-                                                        <span>Used {deduplicated.find((otherColour) => otherColour.hex === withDistanceInfo.distance[0].hex).useCount} time{deduplicated.find((otherColour) => otherColour.hex === withDistanceInfo.distance[0].hex).useCount > 1 ? 's' : ''}</span><br />
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                        {!!withDistanceInfo.distance.filter(({ distance }) => distance < 10).length &&
+                                            <table className="ui celled table">
+                                                <thead>
+                                                    <tr>
+                                                        <th colSpan="2">Nearest Matching color(s)</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {
+                                                        withDistanceInfo.distance
+                                                            .filter(({ distance }) => distance < 10)
+                                                            .map(({ hex, distance }) => {
+                                                                return (
+                                                                    <tr key={hex}>
+                                                                        <td>
+                                                                            <div className={`ui mini left floated ${styles.palette}`} style={{ backgroundColor: hex }}></div>
+                                                                        </td>
+                                                                        <td>
+                                                                            <span><a href={hex}>{hex}</a></span><br />
+                                                                            <span>{(100 - distance).toFixed(2)}% similarity</span><br />
+                                                                            <span>Used {deduplicated.find((otherColour) => otherColour.hex === hex).useCount} time{deduplicated.find((otherColour) => otherColour.hex === hex).useCount > 1 ? 's' : ''}</span><br />
+                                                                        </td>
+                                                                    </tr>
+                                                                )
+                                                            })
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        }
                                         <table className="ui celled table">
                                             <thead>
                                                 <tr>
