@@ -39,6 +39,7 @@ class PalettePane extends React.Component {
                 {
                     deduplicated.map((colour) => {
                         const withDistanceInfo = groupedPalette.find(({ hex }) => hex === colour.hex)
+                        const desaturatedColor = groupedPalette.filter(({ hex, hsl }) => hex !== colour.hex && hsl[1] == 0 && hsl[2] == colour.hsl[2])
                         return (
                             <Card key={colour.hex}>
                                 <Card.Content>
@@ -74,6 +75,31 @@ class PalettePane extends React.Component {
                                                 }
                                             </tbody>
                                         </table>
+                                        {!!desaturatedColor.length &&
+                                            <table className="ui celled table">
+                                                <thead>
+                                                    <tr>
+                                                        <th colSpan="2">Desaturated version</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {
+                                                        desaturatedColor.map((color) => {
+                                                            return (
+                                                                <tr key={color.hex}>
+                                                                    <td>
+                                                                        <div className={`ui mini left floated ${styles.palette}`} style={{ backgroundColor: color.hex }}></div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span><a href={color.hex}>{color.hex}</a></span><br />
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                        })
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        }
                                         {!!withDistanceInfo.distance.filter(({ distance }) => distance < 10).length &&
                                             <table className="ui celled table">
                                                 <thead>
