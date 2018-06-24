@@ -123,7 +123,7 @@ class PalettePane extends React.Component {
                                                                     </td>
                                                                     <td>
                                                                         <span><a href={color.hex}>{color.hex}</a></span><br />
-                                                                        <span><code>{(color.hsl[2] - colour.hsl[2]) > 0 ? 'lighten' : 'darken'}({color.hex}, {Math.abs((color.hsl[2] - colour.hsl[2]))})</code></span><br />
+                                                                        <span>{Math.abs((color.hsl[2] - colour.hsl[2]))} {(color.hsl[2] - colour.hsl[2]) > 0 ? 'lighter' : 'darker'}</span><br />
                                                                         <span>Used {color.useCount} time{color.useCount > 1 ? 's' : ''}</span><br />
                                                                     </td>
                                                                 </tr>
