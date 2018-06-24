@@ -38,8 +38,13 @@ class PalettePane extends React.Component {
             <Card.Group className={styles.palettecontainer} itemsPerRow={3}>
                 {
                     deduplicated.map((colour) => {
-                        const withDistanceInfo = groupedPalette.find(({ hex }) => hex === colour.hex)
-                        const desaturatedColor = groupedPalette.filter(({ hex, hsl }) => hex !== colour.hex && hsl[1] == 0 && hsl[2] == colour.hsl[2])
+                        const withDistanceInfo = groupedPalette
+                            .find(({ hex }) => hex === colour.hex)
+                        const desaturatedColor = groupedPalette
+                            .filter(({ hex, hsl }) => hex !== colour.hex && hsl[1] == 0 && hsl[2] == colour.hsl[2])
+                        const lightnessVariants = groupedPalette
+                            .filter(({ hex, hsl }) => hex !== colour.hex && hsl[0] == colour.hsl[0] && hsl[1] == colour.hsl[1])
+                            .sort((a, b) => a.hsl[2] - b.hsl[2])
                         return (
                             <Card key={colour.hex}>
                                 <Card.Content>
@@ -92,6 +97,34 @@ class PalettePane extends React.Component {
                                                                     </td>
                                                                     <td>
                                                                         <span><a href={color.hex}>{color.hex}</a></span><br />
+                                                                        <span>Used {color.useCount} time{color.useCount > 1 ? 's' : ''}</span><br />
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                        })
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        }
+                                        {!!lightnessVariants.length &&
+                                            <table className="ui celled table">
+                                                <thead>
+                                                    <tr>
+                                                        <th colSpan="2">Lightness variants</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {
+                                                        lightnessVariants.map((color) => {
+                                                            return (
+                                                                <tr key={color.hex}>
+                                                                    <td>
+                                                                        <div className={`ui mini left floated ${styles.palette}`} style={{ backgroundColor: color.hex }}></div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span><a href={color.hex}>{color.hex}</a></span><br />
+                                                                        <span><code>{(color.hsl[2] - colour.hsl[2]) > 0 ? 'lighten' : 'darken'}({color.hex}, {Math.abs((color.hsl[2] - colour.hsl[2]))})</code></span><br />
+                                                                        <span>Used {color.useCount} time{color.useCount > 1 ? 's' : ''}</span><br />
                                                                     </td>
                                                                 </tr>
                                                             )
